@@ -38,7 +38,7 @@ def convert_config_to_make():
     output_file = open("tools/generated/config.mk", "w+")
 
     # create a list with targets included in the kernel
-    part_list = "GLOBAL_PART_LIST := "
+    part_list = "GLOBAL_PART_LIST := lib/libc drv/uart "
     for line in input_file:
         line = line.lower()
         if "partition" in line:
