@@ -28,8 +28,8 @@ stack_t helloworld_stack;
  * @param None
  * @return None
  ******************************************************************************/
-void helloworld_thread(void) {
+void main(void) {
   printf("Hello world !\r\n");
 }
 
-REGISTER_APP("helloworld_app", helloworld_thread, helloworld_stack, 3)
+REGISTER_APP("helloworld_app", main, helloworld_stack, 3)

@@ -19,10 +19,7 @@ for any RISC-V target (64-bit or 32-bit).
 */
 OUTPUT_ARCH( "riscv" )
 
-/*
-we tell the link which procedure is the program entry point
-*/
-ENTRY( helloworld_thread )
+ENTRY(_partition_runtime)
 
 /*
 Each partition uses 32kbyte of memory. 
@@ -55,7 +52,7 @@ SECTIONS
     PROVIDE(_text_end = .);
   } >ram AT>ram :text
 
-  PROVIDE(_global_pointer = .);
+  PROVIDE(_global_pointer_part = .);
 
   /* 
   global read only data
@@ -85,11 +82,11 @@ SECTIONS
   global uninitialized data 
   */
   .bss : {
-    PROVIDE(_bss_start = .);
+    PROVIDE(_bss_start_part = .);
     *(.sbss .sbss.*) 
     *(.gnu.linkonce.sb.*)
 	  *(.bss .bss.*)
     *(.gnu.linkonce.b.*)
-    PROVIDE(_bss_end = .);
+    PROVIDE(_bss_end_part = .);
   } >ram AT>ram :bss
 }
