@@ -15,7 +15,10 @@
 
 MODULE_ID := $(GET_MODULE_ID)
 MODULE_DEPS := lib/sys \
+			drv \
 			arch \
-			kernel
+			lib/libc \
+			kernel \
+			tests
 
 include tools/make/compile.mk
