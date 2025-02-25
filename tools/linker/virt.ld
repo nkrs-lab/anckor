@@ -31,7 +31,8 @@ Qemu for riscv virt machine.
 */
 MEMORY
 {
-  ram (wxa) : ORIGIN = 0x80000000, LENGTH = 1M
+  ram (wxa) : ORIGIN = 0x80000000, LENGTH = 896k
+  heap (wxa) : ORIGIN = 0x800DA000, LENGTH = 128k
 }
 
 /*
@@ -44,6 +45,7 @@ PHDRS
   rodata PT_LOAD FLAGS(4); /* PF_R */
   data PT_LOAD FLAGS(6);   /* PF_R|PF_W */
   bss PT_LOAD FLAGS(6);   /* PF_R|PF_W */
+  stack PT_LOAD FLAGS(6);
 }
 
 SECTIONS
@@ -118,4 +120,11 @@ SECTIONS
     *(.gnu.linkonce.b.*)
     PROVIDE(_bss_end = .);
   } >ram AT>ram :bss
+
+  /* 
+  A dedicated section to store stack data
+  */
+  .stack : {
+	  KEEP(*(.stack .stack.*))
+  } >heap AT>heap :stack
 }

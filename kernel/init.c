@@ -25,7 +25,7 @@
 
 #define INIT_PRIO 1
 
-stack_t init_stack;
+__attribute__((section(".stack"))) stack_t init_stack;
 
 extern uint64_t _apps_start;
 extern uint64_t _apps_end;
