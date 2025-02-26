@@ -22,9 +22,9 @@
 
 /**
  * @brief allocate memory for 4K stack to be used by tasks
- * @param none
- * @return stack_base_addr pointer
+ * @param stack_base_addr pointer
+ * @return -1 in case of error
  */
-uint64_t *alloc_stack(void);
+k_return_t alloc_stack(uint64_t *);
 
 #endif

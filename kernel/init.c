@@ -55,7 +55,7 @@ void init_create(void) {
   stack_t *init_stack = NULL;
 
   // allocate memory for the stack
-  init_stack = (stack_t *)alloc_stack();
+  alloc_stack((uint64_t *)&init_stack);
 
   ax_task_create("init_task", init_run, init_stack, INIT_PRIO);
 }
