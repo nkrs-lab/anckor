@@ -25,6 +25,6 @@
  * @param none
  * @return stack_base_addr pointer
  */
-uint64_t alloc_stack(void);
+uint64_t *alloc_stack(void);
 
 #endif

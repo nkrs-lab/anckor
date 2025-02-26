@@ -17,7 +17,6 @@
 
 #include "alloc.h"
 
-#include "printk.h"
 #include "processor.h"
 
 #define STACK_SLOT_LIMIT 32  // there is 128k / 4K = 32 slots available
@@ -31,14 +30,12 @@ static uint64_t next_stack_slot = 0;
  * @param none
  * @return stack_base_addr pointer
  */
-uint64_t alloc_stack() {
+uint64_t *alloc_stack() {
   // check if we reach the limit of available stack slot
   if (next_stack_slot >= STACK_SLOT_LIMIT) return K_ERROR;
 
   // we have a slot available, so return its address
-  uint64_t stack_base_addr = 0x800DA000 + next_stack_slot * STACK_SIZE;
-
-  printk("stack base addr : 0x%x\r\n", stack_base_addr);
+  uint64_t *stack_base_addr = &_heap_start + next_stack_slot * STACK_SIZE;
 
   // update the index of the next available slot
   next_stack_slot += 1;
