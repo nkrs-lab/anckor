@@ -33,7 +33,7 @@ BUILD_TARGET :=
 ifeq ($(BUILD_CORE), true)
 	GLOBAL_LDFLAGS += -T tools/linker/virt.ld 
 	GLOBAL_LIST := $(GLOBAL_MODULE_LIST)
-	BUILD_TARGET += kernel.elf
+	BUILD_TARGET += core.elf
 endif
 
 ifeq ($(BUILD_PARTITION), true)
@@ -90,4 +90,4 @@ build: $(MODULE_TARGET_LIST)
 
 generate_kernel_img:
 	$(info generate kernel image)
-	@$(OBJCPY) -O binary build/kernel.elf build/anckor.img
+	@$(OBJCPY) -O binary build/core.elf build/anckor.img
