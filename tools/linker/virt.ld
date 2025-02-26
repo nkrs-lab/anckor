@@ -125,6 +125,9 @@ SECTIONS
   A dedicated section to store stack data
   */
   .stack : {
+    PROVIDE(_heap_start = .);
 	  KEEP(*(.stack .stack.*))
+    . = _heap_start + 128k;
+    PROVIDE(_heap_end = .);
   } >heap AT>heap :stack
 }

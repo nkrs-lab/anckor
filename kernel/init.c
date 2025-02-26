@@ -17,15 +17,13 @@
 
 #include "init.h"
 
+#include "alloc.h"
 #include "app.h"
 #include "ax_syscall.h"
 #include "banner.h"
-#include "printk.h"
 #include "task.h"
 
 #define INIT_PRIO 1
-
-__attribute__((section(".stack"))) stack_t init_stack;
 
 extern uint64_t _apps_start;
 extern uint64_t _apps_end;
@@ -54,5 +52,10 @@ void init_run(void) {
  * @return None
  ******************************************************************************/
 void init_create(void) {
-  ax_task_create("init_task", init_run, &init_stack, INIT_PRIO);
+  stack_t *init_stack = NULL;
+
+  // allocate memory for the stack
+  init_stack = (stack_t *)alloc_stack();
+
+  ax_task_create("init_task", init_run, init_stack, INIT_PRIO);
 }
