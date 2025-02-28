@@ -34,13 +34,19 @@ extern uint64_t _apps_end;
  * @return None
  ******************************************************************************/
 void init_run(void) {
-  // iterate over all app descriptors saved in the section(.data.apps)
-  for (uint64_t *app_pt = &_apps_start; app_pt < &_apps_end; app_pt += 1) {
-    // get the app descriptor from the current pointer
-    app_info_t *app = (app_info_t *)*app_pt;
-    // create a task for the app
-    ax_task_create(app->name, app->entry, app->stack, app->prio);
-  }
+  // // iterate over all app descriptors saved in the section(.data.apps)
+  // for (uint64_t *app_pt = &_apps_start; app_pt < &_apps_end; app_pt += 1) {
+  //   // get the app descriptor from the current pointer
+  //   app_info_t *app = (app_info_t *)*app_pt;
+  //   // create a task for the app
+  //   ax_task_create(app->name, app->entry, app->stack, app->prio);
+  // }
+  stack_t *app_stack = NULL;
+
+  // allocate memory for the stack
+  alloc_stack((uint64_t *)&app_stack);
+
+  ax_task_create("first app", (void *)0x80100000, app_stack, 2);
 
   // display kernel banner at the end of the init stage
   banner_display();
