@@ -132,6 +132,8 @@ def build(args):
 
         os.system('make -f tools/make/build.mk build BUILD_CORE=true DEBUG_FLAG=true')
 
+        os.system('riscv64-unknown-elf-gcc -Wall -march=rv64gc -mabi=lp64 -fpie -ffreestanding -I lib/sys/include/ -c init/part_table.c -o build/part_table.elf')
+
         os.system('make -f tools/make/build.mk build BUILD_PARTITION=true DEBUG_FLAG=true')
 
         output_file.write("DEBUG_FLAG=true")
@@ -141,6 +143,8 @@ def build(args):
         os.system('make -f tools/make/build.mk setup_build_dir')
 
         os.system('make -f tools/make/build.mk build BUILD_CORE=true')
+
+        os.system('riscv64-unknown-elf-gcc -Wall -march=rv64gc -mabi=lp64 -fpie -ffreestanding -I lib/sys/include/ -c init/part_table.c -o build/part_table.elf')
 
         os.system('make -f tools/make/build.mk build BUILD_PARTITION=true')
 

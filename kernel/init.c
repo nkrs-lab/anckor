@@ -21,12 +21,12 @@
 #include "app.h"
 #include "ax_syscall.h"
 #include "banner.h"
+#include "part_table.h"
 #include "task.h"
 
 #define INIT_PRIO 1
 
-extern uint64_t _apps_start;
-extern uint64_t _apps_end;
+extern uint64_t _part_table_start;
 
 /******************************************************************************
  * @brief Init task will launch all registered tasks in the system
@@ -34,19 +34,17 @@ extern uint64_t _apps_end;
  * @return None
  ******************************************************************************/
 void init_run(void) {
-  // // iterate over all app descriptors saved in the section(.data.apps)
-  // for (uint64_t *app_pt = &_apps_start; app_pt < &_apps_end; app_pt += 1) {
-  //   // get the app descriptor from the current pointer
-  //   app_info_t *app = (app_info_t *)*app_pt;
-  //   // create a task for the app
-  //   ax_task_create(app->name, app->entry, app->stack, app->prio);
-  // }
   stack_t *app_stack = NULL;
+
+  // read partition table informations from the configuration area
+  partition_info_t *partition_table = (partition_info_t *)&_part_table_start;
 
   // allocate memory for the stack
   alloc_stack((uint64_t *)&app_stack);
 
-  ax_task_create("first app", (void *)0x80100000, app_stack, 2);
+  // create a task for the partition
+  ax_task_create(partition_table[0].name, (void *)partition_table[0].entry,
+                 app_stack, partition_table[0].prio);
 
   // display kernel banner at the end of the init stage
   banner_display();

@@ -31,8 +31,9 @@ Qemu for riscv virt machine.
 */
 MEMORY
 {
-  ram (wxa) : ORIGIN = 0x80000000, LENGTH = 896k
-  heap (wxa) : ORIGIN = 0x800DA000, LENGTH = 128k
+  ram (wxa) : ORIGIN = 0x80000000, LENGTH = 1020k
+  part_table (wxa) : ORIGIN = 0x800FF000, LENGTH = 4k
+  heap (wxa) : ORIGIN = 0x80500000, LENGTH = 3M
 }
 
 /*
@@ -45,7 +46,6 @@ PHDRS
   rodata PT_LOAD FLAGS(4); /* PF_R */
   data PT_LOAD FLAGS(6);   /* PF_R|PF_W */
   bss PT_LOAD FLAGS(6);   /* PF_R|PF_W */
-  stack PT_LOAD FLAGS(6);
 }
 
 SECTIONS
@@ -88,20 +88,6 @@ SECTIONS
     . = _idle_stack_start + 4K;
     _idle_stack_end = .;
 
-    /* 
-    Apps section
-    */
-    PROVIDE(_apps_start = .);
-    KEEP(*(.data.apps));
-    PROVIDE(_apps_end = .);
-
-    /* 
-    tests section
-    */
-    PROVIDE(_tests_start = .);
-    KEEP(*(.data.tests));
-    PROVIDE(_tests_end = .);
-
     *(.sdata .sdata.*)
     *(.gnu.linkonce.s.*)
 	  *(.data .data.*)
@@ -122,12 +108,21 @@ SECTIONS
   } >ram AT>ram :bss
 
   /* 
-  A dedicated section to store stack data
+  A dedicated section to partition_table data
   */
-  .stack : {
+  .part_table : {
+    PROVIDE(_part_table_start = .);
+	  KEEP(*(.part_table .part_table.*))
+    PROVIDE(_part_table_end = .);
+  } >part_table AT>part_table
+
+  /* 
+  A dedicated section for dynamic memory allocation
+  */
+  .heap : {
     PROVIDE(_heap_start = .);
 	  KEEP(*(.stack .stack.*))
-    . = _heap_start + 128k;
+    . = _heap_start + 3M;
     PROVIDE(_heap_end = .);
-  } >heap AT>heap :stack
+  } >heap AT>heap
 }
