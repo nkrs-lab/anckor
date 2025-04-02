@@ -21,25 +21,20 @@ include tools/generated/config.mk
 
 OBJCPY := riscv64-unknown-elf-objcopy
 LD := riscv64-unknown-elf-ld
-GLOBAL_LDFLAGS := -nostdlib -Map build/output.map
+LINKER_SCRIPT ?= default.ld
+GLOBAL_LDFLAGS := -nostdlib -Map build/output.map $(LINKER_SCRIPT)
 
 DEBUG_FLAG ?= false
 
 BUILD_CORE ?= false
 BUILD_PARTITION ?= false
 
-BUILD_TARGET :=
-
 ifeq ($(BUILD_CORE), true)
-	GLOBAL_LDFLAGS += -T tools/linker/virt.ld 
 	GLOBAL_LIST := $(GLOBAL_MODULE_LIST)
-	BUILD_TARGET += core.elf
 endif
 
 ifeq ($(BUILD_PARTITION), true)
-	GLOBAL_LDFLAGS += -T tools/linker/part.ld 
 	GLOBAL_LIST := $(GLOBAL_PART_LIST)
-	BUILD_TARGET += part.elf
 endif
 
 ifeq ($(DEBUG_FLAG), true)

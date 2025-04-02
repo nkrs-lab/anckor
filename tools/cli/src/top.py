@@ -127,24 +127,32 @@ def build(args):
 
     if args.debug:
         debug_suffix = ' DEBUG_FLAG=true'
+        output_file.write(debug_suffix)
         print("[BUILD] --debug")
     else:
         debug_suffix = ' DEBUG_FLAG=false'
         print("[BUILD] --release")
+
+    output_file.close()
     
     os.system('make -f tools/make/build.mk setup_build_dir')
 
-    os.system('make -f tools/make/build.mk build BUILD_CORE=true' + debug_suffix)
+    # build kernel core binary
+    build_target = ' BUILD_TARGET:=core.elf'
+    linker_script = ' LINKER_SCRIPT:="-T tools/linker/virt.ld "'
+    os.system('make -f tools/make/build.mk build BUILD_CORE=true' + build_target + linker_script + debug_suffix)
 
+    # build partition table binary
     os.system('riscv64-unknown-elf-gcc -Wall -march=rv64gc -mabi=lp64 -fpie -ffreestanding -I lib/sys/include/ -c init/part_table.c -o build/part_table.elf')
 
-    os.system('make -f tools/make/build.mk build BUILD_PARTITION=true' + debug_suffix)
+    # build all partitions binaries
+    build_target = ' BUILD_TARGET:=part.elf'
+    linker_script = ' LINKER_SCRIPT:="-T tools/linker/part.ld "'
+    os.system('make -f tools/make/build.mk build BUILD_PARTITION=true' + build_target + linker_script + debug_suffix)
 
-    output_file.write(debug_suffix)
-
+    # merge all binaries in a single executable file
     os.system('make -f tools/make/build.mk generate_kernel_img')
         
-    output_file.close()
 # *******************************************************************************
 # @brief run the kernel on the configured target
 # @param None
