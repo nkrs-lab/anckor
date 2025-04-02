@@ -21,18 +21,17 @@ include tools/generated/config.mk
 
 OBJCPY := riscv64-unknown-elf-objcopy
 LD := riscv64-unknown-elf-ld
-LINKER_SCRIPT ?= default.ld
 # LINKER_SCRIPT is defined in python and passed to the makefile as an argument
+LINKER_SCRIPT ?= default.ld
 GLOBAL_LDFLAGS := -nostdlib -Map build/output.map $(LINKER_SCRIPT)
 
 DEBUG_FLAG ?= false
-
-# COMPILE_LIST is defined in python and passed to the makefile as an argument
-GLOBAL_LIST := $(COMPILE_LIST)
-
 ifeq ($(DEBUG_FLAG), true)
 	GLOBAL_LDFLAGS += -g
 endif
+
+# COMPILE_LIST is defined in python and passed to the makefile as an argument
+GLOBAL_LIST := $(COMPILE_LIST)
 
 .PHONY: all build run
 
