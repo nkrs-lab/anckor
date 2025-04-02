@@ -140,15 +140,17 @@ def build(args):
     # build kernel core binary
     build_target = ' BUILD_TARGET:=core.elf'
     linker_script = ' LINKER_SCRIPT:="-T tools/linker/virt.ld "'
-    os.system('make -f tools/make/build.mk build BUILD_CORE=true' + build_target + linker_script + debug_suffix)
-
-    # build partition table binary
-    os.system('riscv64-unknown-elf-gcc -Wall -march=rv64gc -mabi=lp64 -fpie -ffreestanding -I lib/sys/include/ -c init/part_table.c -o build/part_table.elf')
+    compile_list = 'COMPILE_LIST:="kernel platform arch drv/uart lib/libc"'
+    os.system('make -f tools/make/build.mk build ' + compile_list + build_target + linker_script + debug_suffix)
 
     # build all partitions binaries
     build_target = ' BUILD_TARGET:=part.elf'
     linker_script = ' LINKER_SCRIPT:="-T tools/linker/part.ld "'
-    os.system('make -f tools/make/build.mk build BUILD_PARTITION=true' + build_target + linker_script + debug_suffix)
+    compile_list = 'COMPILE_LIST:="lib/libc drv/uart examples/helloworld"'
+    os.system('make -f tools/make/build.mk build ' + compile_list + build_target + linker_script + debug_suffix)
+
+    # build partition table binary
+    os.system('riscv64-unknown-elf-gcc -Wall -march=rv64gc -mabi=lp64 -fpie -ffreestanding -I lib/sys/include/ -c init/part_table.c -o build/part_table.elf')
 
     # merge all binaries in a single executable file
     os.system('make -f tools/make/build.mk generate_kernel_img')
