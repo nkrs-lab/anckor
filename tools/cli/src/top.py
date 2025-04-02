@@ -124,31 +124,23 @@ def build(args):
 
     # open in append mode to not overwrite content
     output_file = open("tools/generated/debug.mk", "w+")
-    
+
     if args.debug:
+        debug_suffix = ' DEBUG_FLAG=true'
         print("[BUILD] --debug")
-
-        os.system('make -f tools/make/build.mk setup_build_dir')
-
-        os.system('make -f tools/make/build.mk build BUILD_CORE=true DEBUG_FLAG=true')
-
-        os.system('riscv64-unknown-elf-gcc -Wall -march=rv64gc -mabi=lp64 -fpie -ffreestanding -I lib/sys/include/ -c init/part_table.c -o build/part_table.elf')
-
-        os.system('make -f tools/make/build.mk build BUILD_PARTITION=true DEBUG_FLAG=true')
-
-        output_file.write("DEBUG_FLAG=true")
     else:
+        debug_suffix = ' DEBUG_FLAG=false'
         print("[BUILD] --release")
+    
+    os.system('make -f tools/make/build.mk setup_build_dir')
 
-        os.system('make -f tools/make/build.mk setup_build_dir')
+    os.system('make -f tools/make/build.mk build BUILD_CORE=true' + debug_suffix)
 
-        os.system('make -f tools/make/build.mk build BUILD_CORE=true')
+    os.system('riscv64-unknown-elf-gcc -Wall -march=rv64gc -mabi=lp64 -fpie -ffreestanding -I lib/sys/include/ -c init/part_table.c -o build/part_table.elf')
 
-        os.system('riscv64-unknown-elf-gcc -Wall -march=rv64gc -mabi=lp64 -fpie -ffreestanding -I lib/sys/include/ -c init/part_table.c -o build/part_table.elf')
+    os.system('make -f tools/make/build.mk build BUILD_PARTITION=true' + debug_suffix)
 
-        os.system('make -f tools/make/build.mk build BUILD_PARTITION=true')
-
-        output_file.write("DEBUG_FLAG=false")
+    output_file.write(debug_suffix)
 
     os.system('make -f tools/make/build.mk generate_kernel_img')
         
