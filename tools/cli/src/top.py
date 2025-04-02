@@ -37,26 +37,31 @@ def convert_config_to_make():
     input_file = open(".config", "r")
     output_file = open("tools/generated/config.mk", "w+")
 
-    # create a list with targets included in the kernel
-    part_list = "GLOBAL_PART_LIST := lib/libc drv/uart "
+    # create a list with partitions included in the kernel
+    partition_index = 0
     for line in input_file:
         line = line.lower()
         if "partition" in line:
             if "=y" in line:
+                # we found a new partition to compile
                 line = line.replace("config_partition_", '')
                 index = line.rfind("=y")
                 line = line[:index]
                 line = line.replace("_", "/")
 
-                part_list = part_list + line + ' '
-    part_list = part_list + '\r\n'
-    output_file.write(part_list)
+                part_list = 'PART_' + str(partition_index) + '_LIST := lib/libc drv/uart ' + line + '\r\n'
+                partition_index += 1
+                output_file.write(part_list)
 
-    # reset the cursor atht he beginning of the file
+    # save the number of partitions used in the system
+    # this will be used in the build step
+    output_file.write('PARTITION_NB := ' + str(partition_index) + '\r\n')
+
+    # reset the cursor at the beginning of the file
     input_file.seek(0)
 
-    # create a list with modules compiled independently
-    module_list = "GLOBAL_MODULE_LIST := "
+    # create a list with core kernel files compiled independently
+    module_list = "CORE_LIST := "
     for line in input_file:
         line = line.lower()
         if "module" in line:
@@ -135,13 +140,14 @@ def build(args):
 
     output_file.close()
     
+    # clean the build directory
     os.system('make -f tools/make/build.mk setup_build_dir')
 
     config_file = open("tools/generated/config.mk", "r")
     for line in config_file:
         line = line.lower()
-        if "module" in line:
-            line = line.replace("global_module_list := ", '')
+        if "core" in line:
+            line = line.replace("core_list := ", '')
             line = line.replace("\r\n", '')
             compile_list = 'COMPILE_LIST:="' + line + '"'
     config_file.close()
@@ -155,7 +161,7 @@ def build(args):
     for line in config_file:
         line = line.lower()
         if "part" in line:
-            line = line.replace("global_part_list := ", '')
+            line = line.replace("part_list := ", '')
             line = line.replace("\r\n", '')
             compile_list = 'COMPILE_LIST:="' + line + '"'
     config_file.close()
