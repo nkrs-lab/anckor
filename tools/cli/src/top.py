@@ -137,16 +137,32 @@ def build(args):
     
     os.system('make -f tools/make/build.mk setup_build_dir')
 
+    config_file = open("tools/generated/config.mk", "r")
+    for line in config_file:
+        line = line.lower()
+        if "module" in line:
+            line = line.replace("global_module_list := ", '')
+            line = line.replace("\r\n", '')
+            compile_list = 'COMPILE_LIST:="' + line + '"'
+    config_file.close()
+
     # build kernel core binary
     build_target = ' BUILD_TARGET:=core.elf'
     linker_script = ' LINKER_SCRIPT:="-T tools/linker/virt.ld "'
-    compile_list = 'COMPILE_LIST:="kernel platform arch drv/uart lib/libc"'
     os.system('make -f tools/make/build.mk build ' + compile_list + build_target + linker_script + debug_suffix)
+
+    config_file = open("tools/generated/config.mk", "r")
+    for line in config_file:
+        line = line.lower()
+        if "part" in line:
+            line = line.replace("global_part_list := ", '')
+            line = line.replace("\r\n", '')
+            compile_list = 'COMPILE_LIST:="' + line + '"'
+    config_file.close()
 
     # build all partitions binaries
     build_target = ' BUILD_TARGET:=part.elf'
     linker_script = ' LINKER_SCRIPT:="-T tools/linker/part.ld "'
-    compile_list = 'COMPILE_LIST:="lib/libc drv/uart examples/helloworld"'
     os.system('make -f tools/make/build.mk build ' + compile_list + build_target + linker_script + debug_suffix)
 
     # build partition table binary

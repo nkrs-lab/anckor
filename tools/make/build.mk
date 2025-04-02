@@ -17,8 +17,6 @@
 
 include tools/make/macros.mk
 
-include tools/generated/config.mk
-
 OBJCPY := riscv64-unknown-elf-objcopy
 LD := riscv64-unknown-elf-ld
 # LINKER_SCRIPT is defined in python and passed to the makefile as an argument
