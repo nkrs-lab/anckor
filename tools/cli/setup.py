@@ -18,7 +18,7 @@ import os
 
 setup(
     name="anckor CLI",
-    version="0.0.1",
+    version="0.0.2",
     description="A swiss-army knife tool for the Anckor project",
     license="SPL-3",
 

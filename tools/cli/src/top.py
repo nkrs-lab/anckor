@@ -157,19 +157,32 @@ def build(args):
     linker_script = ' LINKER_SCRIPT:="-T tools/linker/virt.ld "'
     os.system('make -f tools/make/build.mk build ' + compile_list + build_target + linker_script + debug_suffix)
 
+    # get partition number from the config makefile
     config_file = open("tools/generated/config.mk", "r")
+    partition_nb = 0
     for line in config_file:
         line = line.lower()
-        if 'part_' + str(0) in line:
-            line = line.replace('part_' + str(0) + '_list := ', '')
+        if 'partition_nb' in line:
+            line = line.replace('partition_nb := ', '')
             line = line.replace("\r\n", '')
-            compile_list = 'COMPILE_LIST:="' + line + '"'
+            partition_nb = int(line)
     config_file.close()
 
-    # build all partitions binaries
-    build_target = ' BUILD_TARGET:=part.elf'
-    linker_script = ' LINKER_SCRIPT:="-T tools/linker/part.ld "'
-    os.system('make -f tools/make/build.mk build ' + compile_list + build_target + linker_script + debug_suffix)
+    for partition_index in range(partition_nb):
+        # get the list of targets to build for the selected partition
+        config_file = open("tools/generated/config.mk", "r")
+        for line in config_file:
+            line = line.lower()
+            if 'part_' + str(partition_index) in line:
+                line = line.replace('part_' + str(partition_index) + '_list := ', '')
+                line = line.replace("\r\n", '')
+                compile_list = 'COMPILE_LIST:="' + line + '"'
+        config_file.close()
+
+        # build all binaries for the selected partition
+        build_target = ' BUILD_TARGET:=part.elf'
+        linker_script = ' LINKER_SCRIPT:="-T tools/linker/part.ld "'
+        os.system('make -f tools/make/build.mk build ' + compile_list + build_target + linker_script + debug_suffix)
 
     # build partition table binary
     os.system('riscv64-unknown-elf-gcc -Wall -march=rv64gc -mabi=lp64 -fpie -ffreestanding -I lib/sys/include/ -c init/part_table.c -o build/part_table.elf')
