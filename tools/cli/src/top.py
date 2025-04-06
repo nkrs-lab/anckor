@@ -160,8 +160,8 @@ def build(args):
     config_file = open("tools/generated/config.mk", "r")
     for line in config_file:
         line = line.lower()
-        if "part" in line:
-            line = line.replace("part_list := ", '')
+        if 'part_' + str(0) in line:
+            line = line.replace('part_' + str(0) + '_list := ', '')
             line = line.replace("\r\n", '')
             compile_list = 'COMPILE_LIST:="' + line + '"'
     config_file.close()
