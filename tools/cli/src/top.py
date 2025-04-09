@@ -156,7 +156,8 @@ def build(args):
     # build kernel core binary
     build_target = ' BUILD_TARGET:=core.elf'
     linker_script = ' LINKER_SCRIPT:="-T tools/linker/virt.ld "'
-    os.system('make -f tools/make/build.mk build ' + compile_list + build_target + linker_script + debug_suffix)
+    map_output = ' MAP:="-Map build/core.map "'
+    os.system('make -f tools/make/build.mk build ' + compile_list + build_target + linker_script + map_output + debug_suffix)
 
     # get partition number from the config makefile
     config_file = open("tools/generated/config.mk", "r")
@@ -183,7 +184,8 @@ def build(args):
         # build all binaries for the selected partition
         build_target = ' BUILD_TARGET:=part' + str(partition_index) + '.elf'
         linker_script = ' LINKER_SCRIPT:="-T tools/linker/part_' + str(partition_index) + '.ld "'
-        os.system('make -f tools/make/build.mk build ' + compile_list + build_target + linker_script + debug_suffix)
+        map_output = ' MAP:="-Map build/part_' + str(partition_index) + '.map "'
+        os.system('make -f tools/make/build.mk build ' + compile_list + build_target + linker_script + map_output + debug_suffix)
 
     # build partition table binary
     os.system('riscv64-unknown-elf-gcc -Wall -march=rv64gc -mabi=lp64 -fpie -ffreestanding -I lib/sys/include/ -c init/part_table.c -o build/part_table.elf')

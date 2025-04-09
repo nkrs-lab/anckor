@@ -21,7 +21,7 @@ OBJCPY := riscv64-unknown-elf-objcopy
 LD := riscv64-unknown-elf-ld
 # LINKER_SCRIPT is defined in python and passed to the makefile as an argument
 LINKER_SCRIPT ?= default.ld
-GLOBAL_LDFLAGS := -nostdlib -Map build/output.map $(LINKER_SCRIPT)
+GLOBAL_LDFLAGS := -nostdlib $(MAP) $(LINKER_SCRIPT)
 
 DEBUG_FLAG ?= false
 ifeq ($(DEBUG_FLAG), true)
