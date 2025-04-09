@@ -72,15 +72,3 @@ build: $(MODULE_TARGET_LIST)
 # link all components
 	$(info link all objects files)
 	@$(LD) $(GLOBAL_LDFLAGS) $(GLOBAL_OBJECTS_LIST) -o build/$(BUILD_TARGET)
-
-generate_kernel_img:
-	$(info generate kernel image)
-# generate binary files for kernel core and modules from elf files
-	@$(OBJCPY) -O binary build/core.elf build/core.img
-	@$(OBJCPY) -O binary build/part_table.elf build/part_table.img
-	@$(OBJCPY) -O binary build/part.elf build/part.img
-# merge all binary files in a single executable
-	@truncate -s 8M build/anckor.img
-	@dd if=build/core.img of=build/anckor.img bs=1 seek=0 conv=notrunc
-	@dd if=build/part_table.img of=build/anckor.img bs=1 seek=1020k conv=notrunc
-	@dd if=build/part.img of=build/anckor.img bs=1 seek=1M conv=notrunc

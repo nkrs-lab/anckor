@@ -14,27 +14,25 @@ the GNU Lesser General Public License along with this program.  If
 not, see https://www.gnu.org/licenses/ */
 
 /*
+Include predefined mappings for syscalls
+*/
+INCLUDE tools/linker/syscalls.ld
+
+/*
 riscv is the name of the architecture that the linker understands
 for any RISC-V target (64-bit or 32-bit).
 */
 OUTPUT_ARCH( "riscv" )
 
-/*
-we tell the link which procedure is the program entry point
-*/
-ENTRY( _start )
+ENTRY(_partition_runtime)
 
 /*
-we declare one memory region of 8MBytes to store our program.
-This sections starts at address 0x8000_0000 as specified in 
-Qemu for riscv virt machine.
+Each partition uses 32kbyte of memory. 
+It starts at offset 0x100000 as 1MByte is reserved for the kernel.
 */
 MEMORY
 {
-  ram (wxa) : ORIGIN = 0x80000000, LENGTH = 1016k 
-  part_table(wxa) : ORIGIN = 0x800FE000, LENGTH = 4k
-  syscall_wrappers (wxa) : ORIGIN = 0x800FF000, LENGTH = 4k
-  heap (wxa) : ORIGIN = 0x80500000, LENGTH = 3M
+  ram (wxa) : ORIGIN = 0x80128000, LENGTH = 32K
 }
 
 /*
@@ -59,7 +57,7 @@ SECTIONS
     PROVIDE(_text_end = .);
   } >ram AT>ram :text
 
-  PROVIDE(_global_pointer = .);
+  PROVIDE(_global_pointer_part = .);
 
   /* 
   global read only data
@@ -78,17 +76,6 @@ SECTIONS
   */
   .data : {
     PROVIDE(_data_start = .);
-
-    /* 
-    idle stack section
-    */
-    . = ALIGN(4K);
-    _idle_stack_start = .;
-    PROVIDE(idle_stack = .);
-    KEEP(*(.data.idle_task));
-    . = _idle_stack_start + 4K;
-    _idle_stack_end = .;
-
     *(.sdata .sdata.*)
     *(.gnu.linkonce.s.*)
 	  *(.data .data.*)
@@ -100,37 +87,11 @@ SECTIONS
   global uninitialized data 
   */
   .bss : {
-    PROVIDE(_bss_start = .);
+    PROVIDE(_bss_start_part = .);
     *(.sbss .sbss.*) 
     *(.gnu.linkonce.sb.*)
 	  *(.bss .bss.*)
     *(.gnu.linkonce.b.*)
-    PROVIDE(_bss_end = .);
+    PROVIDE(_bss_end_part = .);
   } >ram AT>ram :bss
-
-  /* 
-  A dedicated section to partition_table data
-  */
-  .part_table : {
-    PROVIDE(_part_table_start = .);
-	  KEEP(*(.part_table .part_table.*))
-    PROVIDE(_part_table_end = .);
-  } >part_table AT>part_table
-
-  /* 
-  A dedicated section for syscalls wrappers
-  */
-  .syscall_wrappers : {
-	  KEEP(*(.syscall_wrappers .syscall_wrappers.*))
-  } >syscall_wrappers AT>syscall_wrappers
-
-  /* 
-  A dedicated section for dynamic memory allocation
-  */
-  .heap : {
-    PROVIDE(_heap_start = .);
-	  KEEP(*(.stack .stack.*))
-    . = _heap_start + 3M;
-    PROVIDE(_heap_end = .);
-  } >heap AT>heap
 }

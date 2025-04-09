@@ -1,4 +1,4 @@
-config module_tests
+config partition_tests
 	bool "anckor test engine"
 	default y
 	help

@@ -14,6 +14,11 @@ the GNU Lesser General Public License along with this program.  If
 not, see https://www.gnu.org/licenses/ */
 
 /*
+Include predefined mappings for syscalls
+*/
+INCLUDE tools/linker/syscalls.ld
+
+/*
 riscv is the name of the architecture that the linker understands
 for any RISC-V target (64-bit or 32-bit).
 */
@@ -27,7 +32,7 @@ It starts at offset 0x100000 as 1MByte is reserved for the kernel.
 */
 MEMORY
 {
-  ram (wxa) : ORIGIN = 0x80100000, LENGTH = 32K
+  ram (wxa) : ORIGIN = 0x80118000, LENGTH = 32K
 }
 
 /*
