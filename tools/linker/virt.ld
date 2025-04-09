@@ -32,8 +32,8 @@ Qemu for riscv virt machine.
 MEMORY
 {
   ram (wxa) : ORIGIN = 0x80000000, LENGTH = 1016k 
-  part_table(wxa) : ORIGIN = 0x800FE000, LENGTH = 4k
-  syscall_wrappers (wxa) : ORIGIN = 0x800FF000, LENGTH = 4k
+  syscall_map (rx) : ORIGIN = 0x800FE000, LENGTH = 4k
+  part_table(wxa) : ORIGIN = 0x800FF000, LENGTH = 4k
   heap (wxa) : ORIGIN = 0x80500000, LENGTH = 3M
 }
 
@@ -47,6 +47,7 @@ PHDRS
   rodata PT_LOAD FLAGS(4); /* PF_R */
   data PT_LOAD FLAGS(6);   /* PF_R|PF_W */
   bss PT_LOAD FLAGS(6);   /* PF_R|PF_W */
+  syscall_wrappers PT_LOAD FLAGS(5);   /* PF_R|PF_X */
 }
 
 SECTIONS
@@ -122,7 +123,7 @@ SECTIONS
   */
   .syscall_wrappers : {
 	  KEEP(*(.syscall_wrappers .syscall_wrappers.*))
-  } >syscall_wrappers AT>syscall_wrappers
+  } >syscall_map AT>syscall_map
 
   /* 
   A dedicated section for dynamic memory allocation

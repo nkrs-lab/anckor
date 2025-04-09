@@ -200,7 +200,7 @@ def build(args):
 
     os.system('truncate -s 8M build/anckor.img')
     os.system('dd if=build/core.img of=build/anckor.img bs=1 seek=0 conv=notrunc')
-    os.system('dd if=build/part_table.img of=build/anckor.img bs=1 seek=1016k conv=notrunc')
+    os.system('dd if=build/part_table.img of=build/anckor.img bs=1 seek=1020k conv=notrunc')
     for partition_index in range(partition_nb):
         partition_offset = 1024 + partition_index*32
         os.system('dd if=build/part' + str(partition_index) + '.img of=build/anckor.img bs=1 seek=' + str(partition_offset) + 'k conv=notrunc')

@@ -34,7 +34,7 @@
  */
 
 # use .global keyworkd makes the symbol visible to the linker
-.section .syscall_wrappers
+.section .syscall_wrappers, "ax"
 .global ax_task_create
 ax_task_create:
     li a7, SYSCALL_TASK_CREATE
@@ -58,7 +58,7 @@ ax_task_create:
  */
 
 # use .global keyworkd makes the symbol visible to the linker
-.section .syscall_wrappers
+.section .syscall_wrappers, "ax"
 .global ax_task_destroy
 ax_task_destroy:
     li a7, SYSCALL_TASK_DESTROY
@@ -81,7 +81,7 @@ ax_task_destroy:
  * a7: syscall number
  *
  */
-.section .syscall_wrappers
+.section .syscall_wrappers, "ax"
 .global ax_task_yield
 ax_task_yield:
     li a7, SYSCALL_TASK_YIELD
@@ -103,7 +103,7 @@ ax_task_yield:
  * a7: syscall number
  *
  */
-.section .syscall_wrappers
+.section .syscall_wrappers, "ax"
 .global ax_task_sleep
 ax_task_sleep:
     li a7, SYSCALL_TASK_SLEEP
@@ -125,7 +125,7 @@ ax_task_sleep:
  * a7: syscall number
  *
  */
-.section .syscall_wrappers
+.section .syscall_wrappers, "ax"
 .global ax_task_wakeup
 ax_task_wakeup:
     li a7, SYSCALL_TASK_WAKEUP
@@ -147,7 +147,7 @@ ax_task_wakeup:
  * a7: syscall number
  *
  */
-.section .syscall_wrappers
+.section .syscall_wrappers, "ax"
 .global ax_task_exit
 ax_task_exit:
     li a7, SYSCALL_TASK_EXIT
@@ -169,7 +169,7 @@ ax_task_exit:
  * a7: syscall number
  *
  */
-.section .syscall_wrappers
+.section .syscall_wrappers, "ax"
 .global ax_interrupt_request
 ax_interrupt_request:
     li a7, SYSCALL_INTERRUPT_REQUEST
@@ -191,7 +191,7 @@ ax_interrupt_request:
  * a7: syscall number
  *
  */
-.section .syscall_wrappers
+.section .syscall_wrappers, "ax"
 .global ax_interrupt_release
 ax_interrupt_release:
     li a7, SYSCALL_INTERRUPT_RELEASE
@@ -213,7 +213,7 @@ ax_interrupt_release:
  * a7: syscall number
  *
  */
-.section .syscall_wrappers
+.section .syscall_wrappers, "ax"
 .global ax_channel_create
 ax_channel_create:
     li a7, SYSCALL_CHANNEL_CREATE
@@ -235,7 +235,7 @@ ax_channel_create:
  * a7: syscall number
  *
  */
-.section .syscall_wrappers
+.section .syscall_wrappers, "ax"
 .global ax_channel_get
 ax_channel_get:
     li a7, SYSCALL_CHANNEL_GET
@@ -257,7 +257,7 @@ ax_channel_get:
  * a7: syscall number
  *
  */
-.section .syscall_wrappers
+.section .syscall_wrappers, "ax"
 .global ax_channel_snd
 ax_channel_snd:
     li a7, SYSCALL_CHANNEL_SND
@@ -279,7 +279,7 @@ ax_channel_snd:
  * a7: syscall number
  *
  */
-.section .syscall_wrappers
+.section .syscall_wrappers, "ax"
 .global ax_channel_rcv
 ax_channel_rcv:
     li a7, SYSCALL_CHANNEL_RCV
