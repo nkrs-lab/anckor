@@ -115,6 +115,7 @@ SECTIONS
   .part_table : {
     PROVIDE(_part_table_start = .);
 	  KEEP(*(.part_table .part_table.*))
+    . = _part_table_start + 4k;
     PROVIDE(_part_table_end = .);
   } >part_table AT>part_table
 

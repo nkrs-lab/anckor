@@ -18,4 +18,6 @@
 #include "./include/part_table.h"
 
 partition_info_t partition_table[] = {
-    {.name = "hello world partition", .prio = 2, .entry = (void *)0x80100000}};
+    {.name = "ATE partition", .prio = 10, .entry = (void *)0x80100000},
+    {.name = "Test App partition", .prio = 2, .entry = (void *)0x80110000},
+    {.name = "MAGIC_WORD", .prio = 0, .entry = (void *)MAGIC_WORD}};

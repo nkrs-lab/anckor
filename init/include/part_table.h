@@ -22,6 +22,8 @@
 
 #define PARTITION_NAME_LENGTH 50
 
+#define MAGIC_WORD 0x55AA5A5A
+
 typedef struct {
   const char name[PARTITION_NAME_LENGTH];
   uint8_t    prio;

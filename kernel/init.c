@@ -22,11 +22,13 @@
 #include "ax_syscall.h"
 #include "banner.h"
 #include "part_table.h"
+#include "printf.h"
 #include "task.h"
 
 #define INIT_PRIO 1
 
 extern uint64_t _part_table_start;
+extern uint64_t _part_table_end;
 
 /******************************************************************************
  * @brief Init task will launch all registered tasks in the system
@@ -34,17 +36,20 @@ extern uint64_t _part_table_start;
  * @return None
  ******************************************************************************/
 void init_run(void) {
-  stack_t *app_stack = NULL;
+  stack_t *partition_stack = NULL;
 
-  // read partition table informations from the configuration area
-  partition_info_t *partition_table = (partition_info_t *)&_part_table_start;
+  partition_info_t *partition_info = (partition_info_t *)&_part_table_start;
 
-  // allocate memory for the stack
-  alloc_stack((uint64_t *)&app_stack);
+  while ((partition_info->entry != (void (*)(void))MAGIC_WORD)) {
+    // allocate memory for the stack
+    alloc_stack((uint64_t *)&partition_stack);
 
-  // create a task for the partition
-  ax_task_create(partition_table[0].name, (void *)partition_table[0].entry,
-                 app_stack, partition_table[0].prio);
+    // create a task for the partition
+    ax_task_create(partition_info->name, (void *)partition_info->entry,
+                   partition_stack, partition_info->prio);
+
+    partition_info += 1;
+  }
 
   // display kernel banner at the end of the init stage
   banner_display();
