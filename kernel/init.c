@@ -22,7 +22,6 @@
 #include "ax_syscall.h"
 #include "banner.h"
 #include "part_table.h"
-#include "printf.h"
 #include "task.h"
 
 #define INIT_PRIO 1

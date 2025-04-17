@@ -23,6 +23,8 @@
 # use .global keyworkd makes the symbol visible to the linker
 .global _partition_runtime
 _partition_runtime:
+	add	    sp, sp, -16
+    sd      ra, 0(sp)
 .option push
 .option norelax
 	la		gp, _global_pointer_part
@@ -38,7 +40,7 @@ _partition_runtime:
 2:
 	# jump to the partition main routine
     call    main
-3:
-	# hang if we return from the kernel
-	wfi
-	j	3b
+	# we return to task_rt routine
+	ld	    ra, 0(sp)
+    add	    sp, sp, 16
+	ret
