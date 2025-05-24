@@ -32,7 +32,7 @@ It starts at offset 0x100000 as 1MByte is reserved for the kernel.
 */
 MEMORY
 {
-  ram (wxa) : ORIGIN = 0x80110000, LENGTH = 32K
+  ram (wxa) : ORIGIN = 0x80108000, LENGTH = 32K
 }
 
 /*
