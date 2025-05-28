@@ -44,6 +44,30 @@ ax_task_create:
     ret
 
  /*
+ * ax_task_get syscall
+ *
+ * a0: task id
+ * a1: not used
+ * a2: not used
+ * a3: not used
+ * a4: not used
+ * a5: not used
+ * a6: not used
+ * a7: syscall number
+ *
+ */
+
+# use .global keyworkd makes the symbol visible to the linker
+.section .syscall_wrappers, "ax"
+.global ax_task_get
+ax_task_get:
+    li a7, SYSCALL_TASK_GET
+    # rise exception, this will update mepc register but left
+    # the ra register unchanged
+    ecall
+    ret
+
+ /*
  * ax_task_destroy syscall
  *
  * a0: task to delete
@@ -298,6 +322,7 @@ ax_channel_rcv:
 .global _syscall_table_end
 _syscall_table:
     .dword task_create
+    .dword task_get
     .dword task_destroy
     .dword task_yield
     .dword task_sleep
@@ -309,7 +334,6 @@ _syscall_table:
     .dword channel_get
     .dword channel_snd
     .dword channel_rcv
-    .dword sys_default
     .dword sys_default
     .dword sys_default
     .dword sys_default

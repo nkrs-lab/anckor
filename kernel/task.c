@@ -95,6 +95,17 @@ void task_create(const char *name, void (*task_entry)(void), stack_t *stack,
 }
 
 /******************************************************************************
+ * @brief return the id of the current task
+ * @param task_id pointer
+ * @return none
+ ******************************************************************************/
+void task_get(task_id_t *task_id) {
+  task_t *current_task = sched_get_current_task();
+
+  *task_id = current_task->task_id;
+}
+
+/******************************************************************************
  * @brief yield the cpu to an another task
  * @param none
  * @return none

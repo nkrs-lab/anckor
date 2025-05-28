@@ -15,6 +15,7 @@
  * not, see https://www.gnu.org/licenses/
  */
 
+#include "ax_syscall.h"
 #include "printf.h"
 #include "task.h"
 #include "test.h"
@@ -34,7 +35,10 @@ static uint8_t test_step = 0;
 void main(void) {
   TEST_BEGIN(01);
 
-  printf("hello from the app\r\n");
+  task_id_t task_id;
+  ax_task_get(&task_id);
+
+  printf("hello from the app - %x\r\n", task_id);
 
   test_step += 1;
   TEST_ASSERT(01, test_step >= 1)
