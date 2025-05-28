@@ -78,7 +78,7 @@ void interrupt_release(interrupt_id_t interrupt_id) {
 }
 
 /******************************************************************************
- * @brief dispatch interrupt according to its source
+ * @brief wake up the timer interrupt handler
  * @param none
  * @return none
  ******************************************************************************/
