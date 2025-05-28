@@ -29,6 +29,8 @@
 #define bool_t   bool
 
 #define DOUBLE_WORD_SIZE sizeof(uint64_t)
+#define BITE_SIZE        8
+#define BITE_MASK        0xFF
 
 /******************************************************************************
  * @struct k_return_t
