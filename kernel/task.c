@@ -20,7 +20,8 @@
 #include "sched.h"
 #include "stddef.h"
 
-#define __no_return __attribute__((noreturn))
+#define __no_return   __attribute__((noreturn))
+#define VMS_ID_OFFSET 32
 
 extern void _syscall(uint64_t syscall_number);
 
@@ -75,8 +76,9 @@ void task_create(const char *name, void (*task_entry)(void), stack_t *stack,
   task->name = name;
 
   // find a unique task ID
-  task->task_id.vms_id    = 0;
-  task->task_id.thread_id = task_get_new_thread_id();
+  uint64_t vms_id    = 0;
+  uint32_t thread_id = task_get_new_thread_id();
+  task->task_id      = (vms_id << VMS_ID_OFFSET) | thread_id;
 
   // save task priority
   task->prio = prio;

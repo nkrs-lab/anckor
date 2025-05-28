@@ -54,30 +54,36 @@ typedef struct {
 /*******************************************************************************
  * macros to use into test applications
  ******************************************************************************/
-void test_begin(uint64_t test_id) {
-  uint64_t test_data = (test_id << BITE_SIZE) | TEST_START;
+void test_begin() {
+  task_id_t task_id;
+  ax_task_get(&task_id);
+  uint64_t test_data = (task_id << BITE_SIZE) | TEST_START;
   uint64_t test_chan_handler;
   ax_channel_get(&test_chan_handler, "test_channel");
   ax_channel_snd(test_chan_handler, &test_data, sizeof(test_data));
 }
 
-#define TEST_BEGIN(test_id) test_begin(test_id)
+#define TEST_BEGIN() test_begin()
 
-#define TEST_ASSERT(test_id, _expr)                                   \
+#define TEST_ASSERT(_expr)                                            \
   if (!(_expr)) {                                                     \
-    uint64_t test_data = (test_id << BITE_SIZE) | TEST_STOP_KO;       \
+    task_id_t task_id;                                                \
+    ax_task_get(&task_id);                                            \
+    uint64_t test_data = (task_id << BITE_SIZE) | TEST_STOP_KO;       \
     uint64_t test_chan_handler;                                       \
     ax_channel_get(&test_chan_handler, "test_channel");               \
     ax_channel_snd(test_chan_handler, &test_data, sizeof(test_data)); \
   }
 
-void test_end(uint64_t test_id) {
-  uint64_t test_data = (test_id << BITE_SIZE) | TEST_STOP_OK;
+void test_end() {
+  task_id_t task_id;
+  ax_task_get(&task_id);
+  uint64_t test_data = (task_id << BITE_SIZE) | TEST_STOP_OK;
   uint64_t test_chan_handler;
   ax_channel_get(&test_chan_handler, "test_channel");
   ax_channel_snd(test_chan_handler, &test_data, sizeof(test_data));
 }
 
-#define TEST_END(test_id) test_end(test_id)
+#define TEST_END() test_end()
 
 #endif

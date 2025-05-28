@@ -36,10 +36,7 @@ typedef enum task_state_t {
  * @struct task_id_t
  * @brief unique task id is composed of a VMS and thread ID
  ******************************************************************************/
-typedef union task_id_t {
-  uint32_t vms_id;
-  uint32_t thread_id;
-} task_id_t;
+typedef uint64_t task_id_t;
 
 /******************************************************************************
  * @struct task_t

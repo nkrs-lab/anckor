@@ -33,15 +33,12 @@ static uint8_t test_step = 0;
  * @return None
  ******************************************************************************/
 void main(void) {
-  TEST_BEGIN(01);
+  TEST_BEGIN();
 
-  task_id_t task_id;
-  ax_task_get(&task_id);
-
-  printf("hello from the app - %x\r\n", task_id);
+  printf("hello from the app\r\n");
 
   test_step += 1;
-  TEST_ASSERT(01, test_step >= 1)
+  TEST_ASSERT(test_step >= 1);
 
-  TEST_END(01);
+  TEST_END();
 }
