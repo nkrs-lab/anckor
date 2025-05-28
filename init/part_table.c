@@ -22,6 +22,9 @@ partition_info_t partition_table[] = {
      .prio  = 10,
      .entry = (void *)PARTITION_0_BASE_ADDR},
     {.name  = "Test App partition",
-     .prio  = 2,
+     .prio  = 5,
      .entry = (void *)PARTITION_1_BASE_ADDR},
+    {.name  = "Test Threads partition",
+     .prio  = 4,
+     .entry = (void *)PARTITION_2_BASE_ADDR},
     {.name = "MAGIC_WORD", .prio = 0, .entry = (void *)MAGIC_WORD}};

@@ -4,7 +4,7 @@ config partition_tests
 	help
 		test engine
 
-rsource "threads/Kconfig"
 rsource "apps/Kconfig"
+rsource "threads/Kconfig"
 rsource "interrupt/Kconfig"
 rsource "messages/Kconfig"
