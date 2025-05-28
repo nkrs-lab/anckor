@@ -54,8 +54,6 @@ typedef struct {
 /*******************************************************************************
  * macros to use into test applications
  ******************************************************************************/
-void test_set_error(bool_t);
-
 void test_begin(uint64_t test_id) {
   uint64_t test_data = (test_id << BITE_SIZE) | TEST_START;
   uint64_t test_chan_handler;

@@ -20,16 +20,14 @@
 #include "app.h"
 #include "printf.h"
 
+#define TEST_NUMBER 1
+
 /*******************************************************************************
  * Definitions
  ******************************************************************************/
-stack_t       test_engine_stack;
-static bool_t test_error   = false;
-uint64_t      tests_passed = 0;
-uint64_t      tests_failed = 0;
-
-extern uint64_t _tests_start;
-extern uint64_t _tests_end;
+uint64_t tests_passed = 0;
+uint64_t tests_failed = 0;
+uint8_t  test_index   = 0;
 
 /******************************************************************************
  * @brief test scheduling routine
@@ -48,7 +46,7 @@ void main(void) {
   // create a channel to receive tests end messages
   ax_channel_create(&test_chan_handler, "test_channel");
 
-  while (1) {
+  while (test_index < TEST_NUMBER) {
     // block until the thread sends us the TEST_START
     ax_channel_rcv(test_chan_handler, &test_data, &test_data_len);
 
@@ -58,6 +56,7 @@ void main(void) {
 
     if (test_flag == TEST_START) {
       printf("ATE save new task - %d\r\n", test_id);
+      test_index += 1;
     }
 
     // if we registered all tasks, wait for their response
@@ -68,31 +67,21 @@ void main(void) {
 
     switch (test_flag) {
       case TEST_STOP_OK:
-        printf("ATE rcv OK from test id %x\r\n", test_id);
-        test_error = false;
+        tests_passed += 1;
+        printf("ATE - %x - passed\r\n", test_id);
         break;
       case TEST_STOP_KO:
-        printf("ATE rcv KO from test id %x\r\n", test_id);
-        test_error = true;
+        tests_failed += 1;
+        printf("ATE - %x - failed\r\n", test_id);
         break;
       default:
-        printf("ATE rcv erronous value from test application / %x\r\n",
-               test_flag);
+        printf("ATE rcv erronous value from test application - %x\r\n",
+               test_id);
         break;
     }
 
-    break;
-  }
-  // clean up the task
-  // ax_task_destroy((task_t *)test->stack);
-
-  // when the test returns, display its result
-  if (test_error) {
-    tests_failed += 1;
-    printf("ATE -  - failed\r\n");
-  } else {
-    tests_passed += 1;
-    printf("ATE -  - passed\r\n");
+    // clean up the task
+    // ax_task_destroy((task_t *)test->stack);
   }
 
   // all registered tests have been runned
@@ -103,13 +92,4 @@ void main(void) {
     printf("ATE - PASSED - %d passed - %d failed\r\n", tests_passed,
            tests_failed);
   }
-}
-
-/******************************************************************************
- * @brief set test_error
- * @param bool_t test error state
- * @return None
- ******************************************************************************/
-void test_set_error(bool_t error_state) {
-  test_error = error_state;
 }
