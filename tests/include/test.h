@@ -28,18 +28,6 @@
 #define TEST_STOP_KO 0x0000005A
 
 /*******************************************************************************
- * macros to register test applications and run them with the ATE
- ******************************************************************************/
-#define REGISTER_TEST(_entry_name, _entry, _entry_stack, _prio) \
-  test_info_t test_##_entry = {                                 \
-      .name  = _entry_name,                                     \
-      .stack = &_entry_stack,                                   \
-      .prio  = _prio,                                           \
-      .entry = _entry,                                          \
-  };                                                            \
-  _test_section test_info_t *test_##_entry##_pt = &test_##_entry;
-
-/*******************************************************************************
  * @brief structure to save tests parameters
  * @param None
  * @return None
