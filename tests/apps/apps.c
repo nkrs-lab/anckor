@@ -16,7 +16,6 @@
  */
 
 #include "ax_syscall.h"
-#include "printf.h"
 #include "task.h"
 #include "test.h"
 
@@ -34,8 +33,6 @@ static uint8_t test_step = 0;
  ******************************************************************************/
 void main(void) {
   TEST_BEGIN();
-
-  printf("hello from the app\r\n");
 
   test_step += 1;
   TEST_ASSERT(test_step >= 1);
