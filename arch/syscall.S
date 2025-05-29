@@ -139,7 +139,7 @@ ax_task_sleep:
  /*
  * ax_task_wakeup syscall
  *
- * a0: task_t *task
+ * a0: task_id_t task_id
  * a1: not used
  * a2: not used
  * a3: not used

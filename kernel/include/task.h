@@ -117,10 +117,10 @@ void task_sleep();
 
 /******************************************************************************
  * @brief wake up a task put on hold with task_sleep()
- * @param task_t address pointer
+ * @param task id
  * @return none
  ******************************************************************************/
-void task_wakeup(task_t *);
+void task_wakeup(task_id_t);
 
 /******************************************************************************
  * @brief task exit

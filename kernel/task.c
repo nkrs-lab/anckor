@@ -138,10 +138,13 @@ void task_sleep() {
 
 /******************************************************************************
  * @brief wake up a task put on hold with task_sleep()
- * @param task_t address pointer
+ * @param task id
  * @return none
  ******************************************************************************/
-void task_wakeup(task_t *task) {
+void task_wakeup(task_id_t task_id) {
+  // find task from its ID
+  task_t *task = task_find(task_id);
+  // move the state from BLOCKED to READY
   task_set_state(task, READY);
   // add the task to the run queue
   sched_add_task(task);
