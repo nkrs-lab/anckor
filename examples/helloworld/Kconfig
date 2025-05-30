@@ -1,6 +1,6 @@
 config partition_examples_helloworld
 	bool "helloworld app"
-	depends on !module_tests
+	depends on !partition_tests
 	default y
 	help
 		hello world application example
