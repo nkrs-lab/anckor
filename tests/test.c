@@ -20,7 +20,7 @@
 #include "app.h"
 #include "printf.h"
 
-#define TEST_NUMBER 1
+#define TEST_NUMBER 2
 
 /*******************************************************************************
  * Definitions
@@ -54,10 +54,7 @@ void main(void) {
     test_flag = test_data & BITE_MASK;
     test_id   = (test_data & (BITE_MASK << BITE_SIZE)) >> BITE_SIZE;
 
-    if (test_flag == TEST_START) {
-      printf("ATE save new task - %d\r\n", test_id);
-      test_index += 1;
-    }
+    if (test_flag == TEST_START) test_index += 1;
 
     // if we registered all tasks, wait for their response
     ax_channel_rcv(test_chan_handler, &test_data, &test_data_len);
@@ -79,9 +76,6 @@ void main(void) {
                test_id);
         break;
     }
-
-    // clean up the task
-    // ax_task_destroy((task_t *)test->stack);
   }
 
   // all registered tests have been runned
