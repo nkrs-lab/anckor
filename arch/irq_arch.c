@@ -19,7 +19,6 @@
 #include "common.h"
 #include "interrupt.h"
 #include "panic.h"
-#include "printk.h"
 #include "registers.h"
 #include "sched.h"
 #include "task.h"
@@ -92,7 +91,11 @@ static inline void handle_timer_interrupt() {
     // in the run queue and run the scheduler
     // it will immediatly jump to the task if it
     // has the highest priority
-    task_wakeup(irq_table[TIMER_INTERRUPT]);
+
+    // move the state from BLOCKED to READY
+    task_set_state(irq_table[TIMER_INTERRUPT], READY);
+    // add the task to the run queue
+    sched_add_task(irq_table[TIMER_INTERRUPT]);
     // re-enable global interrupts after having
     // woke up the driver task but before switching to it
     csr_set(CSR_MSTATUS, MACHINE_INTERRUPT_ENABLE);
