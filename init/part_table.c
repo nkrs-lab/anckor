@@ -27,4 +27,7 @@ partition_info_t partition_table[] = {
     {.name  = "Test Threads partition",
      .prio  = 4,
      .entry = (void *)PARTITION_2_BASE_ADDR},
+    {.name  = "Test Interrupt partition",
+     .prio  = 2,
+     .entry = (void *)PARTITION_3_BASE_ADDR},
     {.name = "MAGIC_WORD", .prio = 0, .entry = (void *)MAGIC_WORD}};

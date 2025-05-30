@@ -28,18 +28,6 @@
 #define TEST_STOP_KO 0x0000005A
 
 /*******************************************************************************
- * @brief structure to save tests parameters
- * @param None
- * @return None
- ******************************************************************************/
-typedef struct {
-  const char *name;
-  stack_t    *stack;
-  uint8_t     prio;
-  void (*entry)(void);
-} test_info_t;
-
-/*******************************************************************************
  * macros to use into test applications
  ******************************************************************************/
 void test_begin() {

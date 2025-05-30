@@ -20,14 +20,11 @@
 #include "app.h"
 #include "printf.h"
 
-#define TEST_NUMBER 2
+#define MAX_NUMBER_OF_TEST 3
 
 /*******************************************************************************
  * Definitions
  ******************************************************************************/
-uint64_t tests_passed = 0;
-uint64_t tests_failed = 0;
-uint8_t  test_index   = 0;
 
 /******************************************************************************
  * @brief test scheduling routine
@@ -40,29 +37,25 @@ void main(void) {
   uint64_t test_data_len = 0;
   uint16_t test_id       = 0;
   uint16_t test_flag     = 0;
+  uint64_t tests_passed  = 0;
+  uint64_t tests_failed  = 0;
 
   printf("ATE - Anckor test engine\r\n");
 
   // create a channel to receive tests end messages
   ax_channel_create(&test_chan_handler, "test_channel");
 
-  while (test_index < TEST_NUMBER) {
+  while ((tests_passed + tests_failed) < MAX_NUMBER_OF_TEST) {
     // block until the thread sends us the TEST_START
     ax_channel_rcv(test_chan_handler, &test_data, &test_data_len);
 
-    // get received data
-    test_flag = test_data & BITE_MASK;
-    test_id   = (test_data & (BITE_MASK << BITE_SIZE)) >> BITE_SIZE;
-
-    if (test_flag == TEST_START) test_index += 1;
-
-    // if we registered all tasks, wait for their response
-    ax_channel_rcv(test_chan_handler, &test_data, &test_data_len);
-
+    // extract received data
     test_flag = test_data & BITE_MASK;
     test_id   = (test_data & (BITE_MASK << BITE_SIZE)) >> BITE_SIZE;
 
     switch (test_flag) {
+      case TEST_START:
+        break;
       case TEST_STOP_OK:
         tests_passed += 1;
         printf("ATE - %x - passed\r\n", test_id);
