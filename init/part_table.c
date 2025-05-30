@@ -19,7 +19,7 @@
 
 partition_info_t partition_table[] = {
     {.name  = "ATE partition",
-     .prio  = 10,
+     .prio  = 100,
      .entry = (void *)PARTITION_0_BASE_ADDR},
     {.name  = "Test App partition",
      .prio  = 5,
@@ -28,6 +28,9 @@ partition_info_t partition_table[] = {
      .prio  = 4,
      .entry = (void *)PARTITION_2_BASE_ADDR},
     {.name  = "Test Interrupt partition",
-     .prio  = 2,
+     .prio  = 6,
      .entry = (void *)PARTITION_3_BASE_ADDR},
+    {.name  = "Test Messages partition",
+     .prio  = 10,
+     .entry = (void *)PARTITION_4_BASE_ADDR},
     {.name = "MAGIC_WORD", .prio = 0, .entry = (void *)MAGIC_WORD}};

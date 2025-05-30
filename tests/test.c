@@ -20,7 +20,7 @@
 #include "app.h"
 #include "printf.h"
 
-#define MAX_NUMBER_OF_TEST 3
+#define MAX_NUMBER_OF_TEST 4
 
 /*******************************************************************************
  * Definitions

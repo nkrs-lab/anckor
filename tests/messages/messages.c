@@ -114,16 +114,17 @@ void rcv_messages_thread_2(void) {
  * @param None
  * @return None
  ******************************************************************************/
-void messages_thread(void) {
+void main(void) {
+  TEST_BEGIN();
   // CASE 1
 
   // create the send thread
   ax_task_create("snd_messages_test", snd_messages_thread,
-                 &snd_messages_thread_stack, 4);
+                 &snd_messages_thread_stack, 11);
 
   // create the rcv thread
   ax_task_create("rcv_messages_test", rcv_messages_thread,
-                 &rcv_messages_thread_stack, 5);
+                 &rcv_messages_thread_stack, 12);
 
   ax_task_yield();
 
@@ -131,16 +132,14 @@ void messages_thread(void) {
 
   // create the send thread
   ax_task_create("snd_messages_test_2", snd_messages_thread_2,
-                 &snd_messages_thread_stack_2, 5);
+                 &snd_messages_thread_stack_2, 12);
 
   // create the rcv thread
   ax_task_create("rcv_messages_test_2", rcv_messages_thread_2,
-                 &rcv_messages_thread_stack_2, 4);
+                 &rcv_messages_thread_stack_2, 11);
 
   ax_task_yield();
 
   // end of test, return to ATE engine
   TEST_END();
 }
-
-REGISTER_TEST("messages_thread", messages_thread, messages_thread_stack, 3)
