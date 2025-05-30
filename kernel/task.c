@@ -20,12 +20,14 @@
 #include "sched.h"
 #include "stddef.h"
 
-#define __no_return   __attribute__((noreturn))
-#define VMS_ID_OFFSET 32
+#define __no_return         __attribute__((noreturn))
+#define VMS_ID_OFFSET       32
+#define MAX_NUMBER_OF_TASKS 0xFF
 
 extern void _syscall(uint64_t syscall_number);
 
-uint64_t last_thread_id = (uint64_t)NULL;
+uint64_t       last_thread_id = (uint64_t)NULL;
+static task_t *task_list[MAX_NUMBER_OF_TASKS];
 
 /******************************************************************************
  * @brief find a new thread_id
@@ -68,8 +70,8 @@ __no_return void task_runtime(void (*task_entry)(void)) {
  * @param priority for the new task
  * @return none
  ******************************************************************************/
-void task_create(const char *name, void (*task_entry)(void), stack_t *stack,
-                 uint8_t prio) {
+k_return_t task_create(const char *name, void (*task_entry)(void),
+                       stack_t *stack, uint8_t prio) {
   // save task infos at the beginning of the task
   task_t *task = (task_t *)stack;
 
@@ -79,6 +81,10 @@ void task_create(const char *name, void (*task_entry)(void), stack_t *stack,
   uint64_t vms_id    = 0;
   uint32_t thread_id = task_get_new_thread_id();
   task->task_id      = (vms_id << VMS_ID_OFFSET) | thread_id;
+  // check if we reach the max number of task
+  if (task->task_id >= MAX_NUMBER_OF_TASKS) return K_ERROR;
+  // complete the task list
+  task_list[task->task_id] = task;
 
   // save task priority
   task->prio = prio;
@@ -94,6 +100,8 @@ void task_create(const char *name, void (*task_entry)(void), stack_t *stack,
 
   // save the new task in the run queue
   sched_add_task(task);
+
+  return K_OK;
 }
 
 /******************************************************************************
@@ -105,6 +113,15 @@ void task_get(task_id_t *task_id) {
   task_t *current_task = sched_get_current_task();
 
   *task_id = current_task->task_id;
+}
+
+/******************************************************************************
+ * @brief find a task according ot its ID
+ * @param task id
+ * @return task struct
+ ******************************************************************************/
+static inline task_t *task_find(task_id_t task_id) {
+  return task_list[task_id];
 }
 
 /******************************************************************************
@@ -164,6 +181,8 @@ void task_wakeup(task_id_t task_id) {
  ******************************************************************************/
 void task_exit() {
   task_t *task = sched_get_current_task();
+  // remove the task from the task list
+  task_list[task->task_id] = NULL;
   // tag the deleted task as blocked
   task_set_state(task, BLOCKED);
   // remove it from the run queue
@@ -185,6 +204,8 @@ void task_exit() {
  * @return none
  ******************************************************************************/
 void task_destroy(task_t *task) {
+  // remove the task from the task list
+  task_list[task->task_id] = NULL;
   // tag the deleted task as blocked
   task_set_state(task, BLOCKED);
   // remove it from the run queue

@@ -59,7 +59,7 @@ typedef struct task_t {
  * @param priority for the new task
  * @return none
  ******************************************************************************/
-void task_create(const char *, void (*)(void), stack_t *, uint8_t);
+k_return_t task_create(const char *, void (*)(void), stack_t *, uint8_t);
 
 /******************************************************************************
  * @brief task destroy
