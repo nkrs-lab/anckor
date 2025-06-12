@@ -25,13 +25,11 @@ jobs:
           sudo apt install gcc-riscv64-unknown-elf
           riscv64-unknown-elf-gcc --version
 
-      - name: install anckor tool & build code
+      - name: install anckor tool, build & test code
         run: |
           pwd
           source ./setenv.sh
           anckor --version
           anckor configure
           anckor build
-
-      - name: test code
-        run: python tools/ci/ci.py
+          python tools/ci/ci.py
