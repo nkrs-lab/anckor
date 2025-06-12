@@ -22,14 +22,14 @@ For the initial release, focus is made on **core kernel services**. **kernel deb
 - [x] Interrupt management
 - [x] synchronous message-based IPC
 
-### r-0.0.4 / Memory protection
+### r-0.4.0 / Memory protection
 
-- [ ] independant module compilation
+- [x] independant module compilation
 - [ ] User / Kernel stacks
 - [ ] User / Kernel modes protection
 - [ ] Memory protection between modules
 
-### r-0.0.5 / Scheduling
+### r-0.5.0 / Scheduling
 
 - [ ] cooperative scheduling with min heap priority queue
 
