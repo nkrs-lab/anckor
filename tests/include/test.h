@@ -23,46 +23,43 @@
 
 #define _test_section __attribute__((section(".data.tests")))
 
-#define TEST_END_WORD 0x55ABBA55
-
-/*******************************************************************************
- * macros to register test applications and run them with the ATE
- ******************************************************************************/
-#define REGISTER_TEST(_entry_name, _entry, _entry_stack, _prio) \
-  test_info_t test_##_entry = {                                 \
-      .name  = _entry_name,                                     \
-      .stack = &_entry_stack,                                   \
-      .prio  = _prio,                                           \
-      .entry = _entry,                                          \
-  };                                                            \
-  _test_section test_info_t *test_##_entry##_pt = &test_##_entry;
-
-/*******************************************************************************
- * @brief structure to save tests parameters
- * @param None
- * @return None
- ******************************************************************************/
-typedef struct {
-  const char *name;
-  stack_t    *stack;
-  uint8_t     prio;
-  void (*entry)(void);
-} test_info_t;
+#define TEST_START   0x000000AA
+#define TEST_STOP_OK 0x000000A5
+#define TEST_STOP_KO 0x0000005A
 
 /*******************************************************************************
  * macros to use into test applications
  ******************************************************************************/
-void test_set_error(bool_t);
+void test_begin() {
+  task_id_t task_id;
+  ax_task_get(&task_id);
+  uint64_t test_data = (task_id << BITE_SIZE) | TEST_START;
+  uint64_t test_chan_handler;
+  ax_channel_get(&test_chan_handler, "test_channel");
+  ax_channel_snd(test_chan_handler, &test_data, sizeof(test_data));
+}
 
-#define TEST_ASSERT(_expr) \
-  if (!(_expr)) {          \
-    test_set_error(true);  \
+#define TEST_BEGIN() test_begin()
+
+#define TEST_ASSERT(_expr)                                            \
+  if (!(_expr)) {                                                     \
+    task_id_t task_id;                                                \
+    ax_task_get(&task_id);                                            \
+    uint64_t test_data = (task_id << BITE_SIZE) | TEST_STOP_KO;       \
+    uint64_t test_chan_handler;                                       \
+    ax_channel_get(&test_chan_handler, "test_channel");               \
+    ax_channel_snd(test_chan_handler, &test_data, sizeof(test_data)); \
   }
 
-#define TEST_END()                                    \
-  uint64_t test_data = TEST_END_WORD;                 \
-  uint64_t test_chan_handler;                         \
-  ax_channel_get(&test_chan_handler, "test_channel"); \
+void test_end() {
+  task_id_t task_id;
+  ax_task_get(&task_id);
+  uint64_t test_data = (task_id << BITE_SIZE) | TEST_STOP_OK;
+  uint64_t test_chan_handler;
+  ax_channel_get(&test_chan_handler, "test_channel");
   ax_channel_snd(test_chan_handler, &test_data, sizeof(test_data));
+}
+
+#define TEST_END() test_end()
 
 #endif

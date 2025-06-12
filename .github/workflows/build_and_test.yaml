@@ -8,6 +8,11 @@ jobs:
       - name: install code
         uses: actions/checkout@v4
 
+      - name: install python
+        run: |
+          sudo apt-get update
+          sudo apt install python3.12-venv
+
       - name: install qemu
         run: |
           sudo apt-get update
@@ -20,16 +25,12 @@ jobs:
           sudo apt install gcc-riscv64-unknown-elf
           riscv64-unknown-elf-gcc --version
 
-      - name: install anckor tool
+      - name: install anckor tool, build & test code
         run: |
           pwd
           source ./setenv.sh
           anckor --version
-
-      - name: build code
-        run: |
           anckor configure
           anckor build
-
-      - name: test code
-        run: python tools/ci/ci.py
+          pip3 install pexpect
+          python tools/ci/ci.py

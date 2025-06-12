@@ -27,7 +27,7 @@ $ git clone https://github.com/qoda-dev/anckor.git
 Then run the **setenv.sh** script: 
 
 ```shell
-$ ./setenv.sh
+$ source ./setenv.sh
 ...
 Successfully installed anckor-CLI-0.0.1
 ```

@@ -18,18 +18,11 @@
 #include "app.h"
 #include "printf.h"
 
-/*******************************************************************************
- * Definitions
- ******************************************************************************/
-stack_t helloworld_stack;
-
 /******************************************************************************
  * @brief just create a thread and return from it
  * @param None
  * @return None
  ******************************************************************************/
-void helloworld_thread(void) {
+void main(void) {
   printf("Hello world !\r\n");
 }
-
-REGISTER_APP("helloworld_app", helloworld_thread, helloworld_stack, 3)

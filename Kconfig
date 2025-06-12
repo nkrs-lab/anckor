@@ -1,15 +1,5 @@
 mainmenu "Anckor Kernel Configuration"
 
-menu "build type"
-
-config build_debug
-	bool "debug build"
-	default y
-	help
-	  	compile kernel with debug flags
-
-endmenu
-
 menu "kernel"
 
 rsource "kernel/Kconfig"

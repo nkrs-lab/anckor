@@ -43,11 +43,15 @@ _switch_to:
     sd s9, CALLEE_STACK_FRAME_S9(sp)
     sd s10, CALLEE_STACK_FRAME_S10(sp)
     sd s11, CALLEE_STACK_FRAME_S11(sp)
+    # save global pointer in thread structure
+    sd gp, TASK_THREAD_GP(a0)
     # save stack pointer in thread structure
     sd sp, TASK_THREAD_SP(a0)
 
     # load stack pointer from new thread context
     ld sp, TASK_THREAD_SP(a1)
+    # load global pointer from new thread context
+    ld gp, TASK_THREAD_GP(a0)
     # load callee saved regs from next thread context
     ld s0, CALLEE_STACK_FRAME_S0(sp)
     ld s1, CALLEE_STACK_FRAME_S1(sp)

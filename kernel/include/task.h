@@ -36,10 +36,7 @@ typedef enum task_state_t {
  * @struct task_id_t
  * @brief unique task id is composed of a VMS and thread ID
  ******************************************************************************/
-typedef struct task_id_t {
-  uint32_t vms_id;
-  uint32_t thread_id;
-} task_id_t;
+typedef uint64_t task_id_t;
 
 /******************************************************************************
  * @struct task_t
@@ -62,7 +59,7 @@ typedef struct task_t {
  * @param priority for the new task
  * @return none
  ******************************************************************************/
-void task_create(const char *, void (*)(void), stack_t *, uint8_t);
+k_return_t task_create(const char *, void (*)(void), stack_t *, uint8_t);
 
 /******************************************************************************
  * @brief task destroy
@@ -98,6 +95,13 @@ void task_runtime(void (*)(void));
 void task_stack_init(stack_t *, uint64_t, void (*)(void));
 
 /******************************************************************************
+ * @brief return the id of the current task
+ * @param task_id pointer
+ * @return none
+ ******************************************************************************/
+void task_get(task_id_t *);
+
+/******************************************************************************
  * @brief yield the cpu to an another task
  * @param none
  * @return none
@@ -113,10 +117,10 @@ void task_sleep();
 
 /******************************************************************************
  * @brief wake up a task put on hold with task_sleep()
- * @param task_t address pointer
+ * @param task id
  * @return none
  ******************************************************************************/
-void task_wakeup(task_t *);
+void task_wakeup(task_id_t);
 
 /******************************************************************************
  * @brief task exit
@@ -137,34 +141,6 @@ void task_exit();
  ******************************************************************************/
 inline void task_set_state(task_t *task, task_state_t state) {
   task->state = state;
-}
-
-/******************************************************************************
- * @brief get the state of the given task
- * @param
- * @return task state
- ******************************************************************************/
-inline task_state_t task_get_state(task_t *task) {
-  return task->state;
-}
-
-/******************************************************************************
- * @brief get the unique ID of a task
- * @param task from the id is read
- * @return task id
- ******************************************************************************/
-inline uint64_t task_get_tid(task_t *task) {
-  uint64_t id = task->task_id.thread_id;
-  return id;
-}
-
-/******************************************************************************
- * @brief get the unique ID of a task
- * @param task from the priority is read
- * @return task priority
- ******************************************************************************/
-inline uint8_t task_get_priority(task_t *task) {
-  return task->prio;
 }
 
 #endif

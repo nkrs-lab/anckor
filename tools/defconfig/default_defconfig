@@ -1,11 +1,5 @@
 
 #
-# build type
-#
-# CONFIG_build_debug is not set
-# end of build type
-
-#
 # kernel
 #
 CONFIG_module_kernel=y
@@ -39,9 +33,14 @@ CONFIG_module_lib_libc=y
 #
 # tests
 #
-CONFIG_module_tests=y
-CONFIG_module_tests_threads=y
-CONFIG_module_tests_apps=y
-CONFIG_module_tests_interrupt=y
-CONFIG_module_tests_messages=y
+CONFIG_partition_tests=y
+CONFIG_partition_tests_apps=y
+CONFIG_partition_tests_threads=y
+CONFIG_partition_tests_interrupt=y
+CONFIG_partition_tests_messages=y
 # end of tests
+
+#
+# examples
+#
+# end of examples

@@ -1,0 +1,13 @@
+ax_task_create = 0x800fe000;
+ax_task_get = 0x800fe008;
+ax_task_destroy = 0x800fe010;
+ax_task_yield = 0x800fe018;
+ax_task_sleep = 0x800fe020;
+ax_task_wakeup = 0x800fe028;
+ax_task_exit = 0x800fe030;
+ax_interrupt_request = 0x800fe038;
+ax_interrupt_release = 0x800fe040;
+ax_channel_create = 0x800fe048;
+ax_channel_get = 0x800fe050;
+ax_channel_snd = 0x800fe058;
+ax_channel_rcv = 0x800fe060;

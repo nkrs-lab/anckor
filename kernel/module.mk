@@ -18,5 +18,6 @@ MODULE_DEPS := lib/sys \
 			drv/uart \
 			arch \
 			lib/libc \
+			init
 
 include tools/make/compile.mk

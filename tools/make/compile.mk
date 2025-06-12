@@ -18,7 +18,7 @@ BUILD_DIR := build
 CC := riscv64-unknown-elf-gcc
 GLOBAL_CFLAGS := -Wall -march=rv64gc -mabi=lp64 -fpie -ffreestanding
 
-ifeq ($(config_build_debug),y)
+ifeq ($(DEBUG_FLAG), true)
 	MODULE_CFLAGS += -Og -ggdb
 else 
 	MODULE_CFLAGS += -O1

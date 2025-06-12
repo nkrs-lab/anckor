@@ -1,10 +1,10 @@
-config module_tests
+config partition_tests
 	bool "anckor test engine"
 	default y
 	help
 		test engine
 
-rsource "threads/Kconfig"
 rsource "apps/Kconfig"
+rsource "threads/Kconfig"
 rsource "interrupt/Kconfig"
 rsource "messages/Kconfig"
