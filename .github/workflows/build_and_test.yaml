@@ -25,14 +25,11 @@ jobs:
           sudo apt install gcc-riscv64-unknown-elf
           riscv64-unknown-elf-gcc --version
 
-      - name: install anckor tool
+      - name: install anckor tool & build code
         run: |
           pwd
           source ./setenv.sh
           anckor --version
-
-      - name: build code
-        run: |
           anckor configure
           anckor build
 
