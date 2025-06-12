@@ -32,4 +32,5 @@ jobs:
           anckor --version
           anckor configure
           anckor build
+          pip3 install pexpect
           python tools/ci/ci.py
