@@ -24,3 +24,4 @@ As a remainder, these **records** contain the following fields:
 - [Synchronous message passing](./adr-011.md)
 - [Dynamic memory allocation](./adr-012.md)
 - [Init task - configuration table](./adr-013.md)
+- [Independant module compilation](./adr-014.md)
