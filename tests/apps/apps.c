@@ -15,7 +15,7 @@
  * not, see https://www.gnu.org/licenses/
  */
 
-#include "printf.h"
+#include "ax_syscall.h"
 #include "task.h"
 #include "test.h"
 
@@ -31,11 +31,11 @@ static uint8_t test_step = 0;
  * @param None
  * @return None
  ******************************************************************************/
-void apps_test_thread(void) {
+void main(void) {
+  TEST_BEGIN();
+
   test_step += 1;
-  TEST_ASSERT(test_step >= 1)
+  TEST_ASSERT(test_step >= 1);
 
-  TEST_END()
+  TEST_END();
 }
-
-REGISTER_TEST("apps_test", apps_test_thread, apps_test_stack, 3)

@@ -17,16 +17,19 @@
 
 include tools/make/macros.mk
 
-include tools/generated/config.mk
-
 OBJCPY := riscv64-unknown-elf-objcopy
 LD := riscv64-unknown-elf-ld
-GLOBAL_LDFLAGS += -nostdlib -Map build/output.map -T tools/linker/virt.ld 
-DEBUG_FLAG ?= false
+# LINKER_SCRIPT is defined in python and passed to the makefile as an argument
+LINKER_SCRIPT ?= default.ld
+GLOBAL_LDFLAGS := -nostdlib $(MAP) $(LINKER_SCRIPT)
 
+DEBUG_FLAG ?= false
 ifeq ($(DEBUG_FLAG), true)
 	GLOBAL_LDFLAGS += -g
 endif
+
+# COMPILE_LIST is defined in python and passed to the makefile as an argument
+GLOBAL_LIST := $(COMPILE_LIST)
 
 .PHONY: all build run
 
@@ -65,9 +68,7 @@ GLOBAL_OBJECTS_LIST :=
 include tools/make/collect.mk
 
 # MODULE_TARGET_LIST contains all modules to build before linking
-build: setup_build_dir $(MODULE_TARGET_LIST)
+build: $(MODULE_TARGET_LIST)
 # link all components
 	$(info link all objects files)
-	@$(LD) $(GLOBAL_LDFLAGS) $(GLOBAL_OBJECTS_LIST) -o build/kernel.elf
-	$(info generate kernel image)
-	@$(OBJCPY) -O binary build/kernel.elf build/kernel.img
+	@$(LD) $(GLOBAL_LDFLAGS) $(GLOBAL_OBJECTS_LIST) -o build/$(BUILD_TARGET)

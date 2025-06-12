@@ -1,6 +1,6 @@
-config module_tests_messages
+config partition_tests_messages
 	bool "test message app"
-	depends on module_tests
+	depends on partition_tests
 	default y
 	help
 		test messages api

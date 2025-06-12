@@ -37,8 +37,31 @@ def convert_config_to_make():
     input_file = open(".config", "r")
     output_file = open("tools/generated/config.mk", "w+")
 
-    module_list = "GLOBAL_MODULE_LIST := "
+    # create a list with partitions included in the kernel
+    partition_index = 0
+    for line in input_file:
+        line = line.lower()
+        if "partition" in line:
+            if "=y" in line:
+                # we found a new partition to compile
+                line = line.replace("config_partition_", '')
+                index = line.rfind("=y")
+                line = line[:index]
+                line = line.replace("_", "/")
 
+                part_list = 'PART_' + str(partition_index) + '_LIST := lib/libc drv/uart ' + line + '\r\n'
+                partition_index += 1
+                output_file.write(part_list)
+
+    # save the number of partitions used in the system
+    # this will be used in the build step
+    output_file.write('PARTITION_NB := ' + str(partition_index) + '\r\n')
+
+    # reset the cursor at the beginning of the file
+    input_file.seek(0)
+
+    # create a list with core kernel files compiled independently
+    module_list = "CORE_LIST := "
     for line in input_file:
         line = line.lower()
         if "module" in line:
@@ -49,15 +72,16 @@ def convert_config_to_make():
                 line = line.replace("_", "/")
 
                 module_list = module_list + line + ' '
-    
+    module_list = module_list + '\r\n'
     output_file.write(module_list)
 
+    # close generated files
     input_file.close()
     output_file.close()
     print("generate config.mk file")
 
 # *******************************************************************************
-# @brief create a config.mk file from a _defconfig file
+# @brief create a config.mk file from a _defconfig filye
 # @param None
 # @return None
 # *******************************************************************************
@@ -105,19 +129,82 @@ def build(args):
 
     # open in append mode to not overwrite content
     output_file = open("tools/generated/debug.mk", "w+")
-    
+
     if args.debug:
+        debug_suffix = ' DEBUG_FLAG=true'
+        output_file.write(debug_suffix)
         print("[BUILD] --debug")
-        os.system('make -f tools/make/build.mk build DEBUG_FLAG=true')
-
-        output_file.write("DEBUG_FLAG=true")
     else:
+        debug_suffix = ' DEBUG_FLAG=false'
         print("[BUILD] --release")
-        os.system('make -f tools/make/build.mk build')
 
-        output_file.write("DEBUG_FLAG=false")
-        
     output_file.close()
+    
+    # clean the build directory
+    os.system('make -f tools/make/build.mk setup_build_dir')
+
+    # get the list of targets to build for the kernel core
+    config_file = open("tools/generated/config.mk", "r")
+    for line in config_file:
+        line = line.lower()
+        if "core" in line:
+            line = line.replace("core_list := ", '')
+            line = line.replace("\r\n", '')
+            compile_list = 'COMPILE_LIST:="' + line + '"'
+    config_file.close()
+
+    # build kernel core binary
+    build_target = ' BUILD_TARGET:=core.elf'
+    linker_script = ' LINKER_SCRIPT:="-T tools/linker/virt.ld "'
+    map_output = ' MAP:="-Map build/core.map "'
+    os.system('make -f tools/make/build.mk build ' + compile_list + build_target + linker_script + map_output + debug_suffix)
+
+    # get partition number from the config makefile
+    config_file = open("tools/generated/config.mk", "r")
+    partition_nb = 0
+    for line in config_file:
+        line = line.lower()
+        if 'partition_nb' in line:
+            line = line.replace('partition_nb := ', '')
+            line = line.replace("\r\n", '')
+            partition_nb = int(line)
+    config_file.close()
+
+    for partition_index in range(partition_nb):
+        # get the list of targets to build for the selected partition
+        config_file = open("tools/generated/config.mk", "r")
+        for line in config_file:
+            line = line.lower()
+            if 'part_' + str(partition_index) in line:
+                line = line.replace('part_' + str(partition_index) + '_list := ', '')
+                line = line.replace("\r\n", '')
+                compile_list = 'COMPILE_LIST:=" tools/partition ' + line + '"'
+        config_file.close()
+
+        # build all binaries for the selected partition
+        build_target = ' BUILD_TARGET:=part' + str(partition_index) + '.elf'
+        linker_script = ' LINKER_SCRIPT:="-T tools/linker/part_' + str(partition_index) + '.ld "'
+        map_output = ' MAP:="-Map build/part_' + str(partition_index) + '.map "'
+        os.system('make -f tools/make/build.mk build ' + compile_list + build_target + linker_script + map_output + debug_suffix)
+
+    # build partition table binary
+    os.system('riscv64-unknown-elf-gcc -Wall -march=rv64gc -mabi=lp64 -fpie -ffreestanding -I lib/sys/include/ -c init/part_table.c -o build/part_table.elf')
+
+    print('generate kernel image')
+
+    # generate raw binary for each object file
+    os.system('riscv64-unknown-elf-objcopy -O binary build/core.elf build/core.img')
+    os.system('riscv64-unknown-elf-objcopy -O binary build/part_table.elf build/part_table.img')
+    for partition_index in range(partition_nb):
+        os.system('riscv64-unknown-elf-objcopy -O binary build/part' + str(partition_index) + '.elf build/part' + str(partition_index) + '.img')
+
+    os.system('truncate -s 8M build/anckor.img')
+    os.system('dd if=build/core.img of=build/anckor.img bs=1 seek=0 conv=notrunc')
+    os.system('dd if=build/part_table.img of=build/anckor.img bs=1 seek=1020k conv=notrunc')
+    for partition_index in range(partition_nb):
+        partition_offset = 1024 + partition_index*32
+        os.system('dd if=build/part' + str(partition_index) + '.img of=build/anckor.img bs=1 seek=' + str(partition_offset) + 'k conv=notrunc')
+        
 # *******************************************************************************
 # @brief run the kernel on the configured target
 # @param None

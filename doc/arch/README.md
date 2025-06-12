@@ -22,3 +22,6 @@ As a remainder, these **records** contain the following fields:
 - [Prevent tasks to run in kernel mode](./adr-009.md)
 - [Interrupts](./adr-010.md)
 - [Synchronous message passing](./adr-011.md)
+- [Dynamic memory allocation](./adr-012.md)
+- [Init task - configuration table](./adr-013.md)
+- [Independant module compilation](./adr-014.md)

@@ -18,6 +18,7 @@
 #define OFFSETS_H
 
 #define TASK_THREAD_SP 0
+#define TASK_THREAD_GP 8
 
 #define CALLEE_STACK_FRAME_LENGTH 96
 #define CALLEE_STACK_FRAME_S0     0

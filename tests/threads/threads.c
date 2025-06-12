@@ -23,8 +23,8 @@
 /*******************************************************************************
  * Definitions
  ******************************************************************************/
-stack_t main_thread_stack;
-stack_t second_thread_stack;
+stack_t   second_thread_stack;
+task_id_t task_id = 0;
 
 static uint8_t test_step = 0;
 
@@ -46,7 +46,7 @@ void second_thread(void) {
   TEST_ASSERT(test_step >= 3)
 
   // return from the second thread
-  ax_task_wakeup((task_t *)main_thread_stack);
+  ax_task_wakeup(task_id);
 
   ax_task_yield();
 
@@ -60,13 +60,17 @@ void second_thread(void) {
  * @param None
  * @return None
  ******************************************************************************/
-void threads_test_thread(void) {
+void main(void) {
+  TEST_BEGIN();
+
+  ax_task_get(&task_id);
+
   // STEP 1
   test_step += 1;
   TEST_ASSERT(test_step >= 1)
 
   // create the second thread
-  ax_task_create("second_thread", second_thread, &second_thread_stack, 4);
+  ax_task_create("second_thread", second_thread, &second_thread_stack, 3);
 
   // switch from the main thread to the second thread
   ax_task_sleep();
@@ -75,7 +79,5 @@ void threads_test_thread(void) {
   test_step += 1;
   TEST_ASSERT(test_step >= 4)
 
-  TEST_END()
+  TEST_END();
 }
-
-REGISTER_TEST("threads_test", threads_test_thread, main_thread_stack, 5)

@@ -19,7 +19,6 @@
 
 #include "ax_syscall.h"
 #include "irq_arch.h"
-#include "printk.h"
 #include "test.h"
 #include "timer.h"
 
@@ -33,8 +32,6 @@
 /*******************************************************************************
  * Definitions
  ******************************************************************************/
-stack_t interrupt_thread_stack;
-
 static uint8_t test_step = 0;
 
 /******************************************************************************
@@ -42,11 +39,13 @@ static uint8_t test_step = 0;
  * @param None
  * @return None
  ******************************************************************************/
-void interrupt_thread(void) {
+void main(void) {
   time_t raw_timer_value  = 0;
   time_t start_date_in_us = 0;
   time_t stop_date_in_us  = 0;
   time_t duration_in_us   = 0;
+
+  TEST_BEGIN();
 
   while (test_step <= NB_INTERRUPT_LOOP) {
     // get the current time
@@ -76,7 +75,5 @@ void interrupt_thread(void) {
 
   TEST_ASSERT(test_step >= NB_INTERRUPT_LOOP)
 
-  TEST_END()
+  TEST_END();
 }
-
-REGISTER_TEST("interrupt_test", interrupt_thread, interrupt_thread_stack, 5)

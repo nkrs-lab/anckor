@@ -1,6 +1,6 @@
-config module_tests_apps
+config partition_tests_apps
 	bool "test apps app"
-	depends on module_tests
+	depends on partition_tests
 	default n
 	help
 		test apps app

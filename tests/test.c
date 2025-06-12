@@ -20,56 +20,54 @@
 #include "app.h"
 #include "printf.h"
 
+#define MAX_NUMBER_OF_TEST 4
+
 /*******************************************************************************
  * Definitions
  ******************************************************************************/
-stack_t       test_engine_stack;
-static bool_t test_error   = false;
-uint64_t      tests_passed = 0;
-uint64_t      tests_failed = 0;
-
-extern uint64_t _tests_start;
-extern uint64_t _tests_end;
 
 /******************************************************************************
  * @brief test scheduling routine
  * @param None
  * @return None
  ******************************************************************************/
-void test_engine(void) {
+void main(void) {
   uint64_t test_chan_handler;
   uint64_t test_data     = 0;
   uint64_t test_data_len = 0;
+  uint16_t test_id       = 0;
+  uint16_t test_flag     = 0;
+  uint64_t tests_passed  = 0;
+  uint64_t tests_failed  = 0;
 
   printf("ATE - Anckor test engine\r\n");
 
   // create a channel to receive tests end messages
   ax_channel_create(&test_chan_handler, "test_channel");
 
-  // iterate over all tests descriptors saved in the section(.data.tests)
-  for (uint64_t *test_pt = &_tests_start; test_pt < &_tests_end; test_pt += 1) {
-    // get the test descriptor from the current pointer
-    test_info_t *test = (test_info_t *)*test_pt;
-    // create a task for the test
-    ax_task_create(test->name, test->entry, test->stack, test->prio);
-
-    // block until the thread sends us the TEST_END_WORD
+  while ((tests_passed + tests_failed) < MAX_NUMBER_OF_TEST) {
+    // block until the thread sends us the TEST_START
     ax_channel_rcv(test_chan_handler, &test_data, &test_data_len);
 
-    if (test_data != TEST_END_WORD) test_error = true;
-    // reset trigger word
-    test_data = 0;
+    // extract received data
+    test_flag = test_data & BITE_MASK;
+    test_id   = (test_data & (BITE_MASK << BITE_SIZE)) >> BITE_SIZE;
 
-    // clean up the task
-    ax_task_destroy((task_t *)test->stack);
-
-    // when the test returns, display its result
-    if (test_error) {
-      tests_failed += 1;
-      printf("ATE - %s - failed\r\n", test->name);
-    } else {
-      tests_passed += 1;
-      printf("ATE - %s - passed\r\n", test->name);
+    switch (test_flag) {
+      case TEST_START:
+        break;
+      case TEST_STOP_OK:
+        tests_passed += 1;
+        printf("ATE - %x - passed\r\n", test_id);
+        break;
+      case TEST_STOP_KO:
+        tests_failed += 1;
+        printf("ATE - %x - failed\r\n", test_id);
+        break;
+      default:
+        printf("ATE rcv erronous value from test application - %x\r\n",
+               test_id);
+        break;
     }
   }
 
@@ -82,15 +80,3 @@ void test_engine(void) {
            tests_failed);
   }
 }
-
-/******************************************************************************
- * @brief set test_error
- * @param bool_t test error state
- * @return None
- ******************************************************************************/
-void test_set_error(bool_t error_state) {
-  test_error = error_state;
-}
-
-// define max priority for the test engine thread
-REGISTER_APP("test_engine", test_engine, test_engine_stack, 2);
